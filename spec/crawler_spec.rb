@@ -1,7 +1,7 @@
 require 'crawler'
 require 'nokogiri'
 
-RSpec.describe Crawler, 'process_doc' do
+RSpec.describe Crawler, '#process_doc' do
   before(:all) do
     @root = "http://example.com"
     @crawl = Crawl.new @root
