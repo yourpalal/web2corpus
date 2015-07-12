@@ -1,10 +1,11 @@
 require 'uri'
 
 class Crawl
+  attr_reader :url
+  
   def initialize(url, avoid = [])
     @url = url
 
-    root_uri = URI(url)
     @avoid = avoid.map { |a|
       a = URI::join(url, a) if !a.start_with? url
       a.to_s

@@ -9,4 +9,5 @@ gem 'nokogiri', '1.6.6.2'
 group :development, :test do
   gem 'rspec', '3.3.0'
   gem 'rake', '10.4.2'
+  gem 'test_construct', '2.0.1'
 end
