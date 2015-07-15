@@ -26,7 +26,7 @@ class FilePrinter
 
   def append(doc, uri)
     path = @out_dir + Pathname(URI(uri).path).relative_path_from(@crawl_root)
-    if path.basename == "" then
+    if path.extname == "" then
       path = path + 'index.txt'
     end
 

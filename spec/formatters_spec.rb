@@ -37,8 +37,9 @@ RSpec.describe FilePrinter, '#append' do
     within_construct() do |construct|
       construct.directory 'fileprinter_web2text' do |d|
         FilePrinter.new(crawl, folder)
-          .append(doc1, "#{root}/index.html")
+          .append(doc1, "#{root}/")
           .append(doc2, "#{root}/cool/index.html")
+          .append(doc1, "#{root}/no_slash")
 
         doc1_path = File.join folder, 'index.txt'
         expect(File::file?(doc1_path)).to be_truthy
@@ -47,6 +48,11 @@ RSpec.describe FilePrinter, '#append' do
         doc2_path = File.join(folder, 'cool', 'index.txt')
         expect(File.file?(doc2_path)).to be_truthy
         expect(IO.read(doc2_path)).to eq(doc2)
+
+        doc3_path = File.join folder, 'no_slash', 'index.txt'
+        expect(File::file?(doc3_path)).to be_truthy
+        expect(IO.read(doc3_path)).to eq(doc1)
+
       end
     end
   end
