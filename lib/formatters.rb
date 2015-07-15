@@ -1,7 +1,7 @@
 require 'uri'
 
 class LinePrinter
-  def initialize(output)
+  def initialize(crawl, output)
     @output = output
     @first = true
   end
@@ -27,8 +27,10 @@ class FilePrinter
   def append(doc, uri)
     path = @out_dir + Pathname(URI(uri).path).relative_path_from(@crawl_root)
     if path.basename == "" then
-      path = path + 'index.html'
+      path = path + 'index.txt'
     end
+
+    path = path.sub_ext('.txt')
 
     path.parent.mkpath
     path.open("w") { |f| f.write(doc) }

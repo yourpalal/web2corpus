@@ -12,8 +12,9 @@ root = 'http://example.com/wow/'
 
 RSpec.describe LinePrinter, '#append' do
   it 'prints one line per document' do
+    crawl = Crawl.new root
     result = StringIO::open do |out|
-      LinePrinter.new(out)
+      LinePrinter.new(crawl, out)
         .append(doc1, "#{root}index.html")
         .append(doc2, "#{root}/cool/index.html")
 
@@ -36,14 +37,14 @@ RSpec.describe FilePrinter, '#append' do
     within_construct() do |construct|
       construct.directory 'fileprinter_web2text' do |d|
         FilePrinter.new(crawl, folder)
-          .append(doc1, "#{root}index.html")
+          .append(doc1, "#{root}/index.html")
           .append(doc2, "#{root}/cool/index.html")
 
-        doc1_path = File.join folder, 'index.html'
+        doc1_path = File.join folder, 'index.txt'
         expect(File::file?(doc1_path)).to be_truthy
         expect(IO.read(doc1_path)).to eq(doc1)
 
-        doc2_path = File.join(folder, 'cool', 'index.html')
+        doc2_path = File.join(folder, 'cool', 'index.txt')
         expect(File.file?(doc2_path)).to be_truthy
         expect(IO.read(doc2_path)).to eq(doc2)
       end
