@@ -13,6 +13,7 @@ options = {
   query: "body",
   sleep: 0,
   avoid: [],
+  focus: [],
   formatter: LinePrinter,
   out: $stdout,
 }
@@ -31,6 +32,11 @@ OptionParser.new do |opts|
     opts.on("--avoid x,y,z", Array, "List of paths to avoid when crawling. These paths and everything below them will be ignored.") do |avoid|
       options[:avoid] = avoid
     end
+
+    opts.on("--focus x,y,z", Array, "List of paths to process when crawling. Only these paths and pages below them will be processed") do |focus|
+      options[:focus] = focus
+    end
+
 
     opts.on("--lines [web2.txt]", String, "One line per page. Can print to std out or a file.") do |f|
       options[:formatter] = LinePrinter
@@ -60,7 +66,7 @@ if ARGV.length != 1 then
   exit
 end
 
-crawl = Crawl.new ARGV[0], options[:avoid]
+crawl = Crawl.new ARGV[0], options[:avoid], options[:focus]
 crawler = Crawler.new crawl, options[:query]
 formatter = options[:formatter].new crawl, options[:out]
 
@@ -69,8 +75,8 @@ Anemone.crawl(crawl.url, :obey_robots_txt => true) do |anemone|
     anemone.on_every_page do |page|
         # ignore redirects
         next if 300 <= page.code and page.code < 400
+        next if !crawl.focus? page.url
 
-        puts page.url
         plain = crawler.doc_as_plaintext page.doc
         formatter.append plain, page.url
         sleep options[:sleep]

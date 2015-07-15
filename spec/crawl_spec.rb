@@ -8,6 +8,7 @@ RSpec.describe Crawl, '#filter' do
       crawl = Crawl.new root
       links = ["#{root}/wow", "#{root}/neat"]
       expect(crawl.filter links).to eq links
+      expect(links.select {|u| crawl.focus? u}).to eq links
     end
   end
 
@@ -18,6 +19,14 @@ RSpec.describe Crawl, '#filter' do
 
       crawl = Crawl.new root, ["#{root}/avoid"]
       expect(crawl.filter good + bad).to eq good
+    end
+
+    it "can focus on pages" do
+      bad = ["#{root}/avoid", "#{root}/avoid"]
+      good = ["#{root}/focus", "#{root}/focus/index.html", "#{root}/focus/this/nested/stuff"]
+
+      crawl = Crawl.new root, [], ["#{root}/focus"]
+      expect((good + bad).select {|u| crawl.focus? u}).to eq good
     end
 
     it "can skip host name parts to filter out directories" do

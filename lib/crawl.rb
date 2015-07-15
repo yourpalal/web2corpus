@@ -3,10 +3,15 @@ require 'uri'
 class Crawl
   attr_reader :url
 
-  def initialize(url, avoid = [])
+  def initialize(url, avoid = [], focus = [])
     @url = url
 
     @avoid = avoid.map { |a|
+      a = URI::join(url, a) if !a.start_with? url
+      a.to_s
+    }
+
+    @focus = focus.map { |a|
       a = URI::join(url, a) if !a.start_with? url
       a.to_s
     }
@@ -21,5 +26,16 @@ class Crawl
     @avoid.any? { |a|
       url_s.start_with? a
     }
+  end
+
+  def focus?(url)
+    if @focus.empty?
+      true
+    else
+      url_s = url.to_s
+      @focus.any? { |a|
+        url_s.start_with? a
+      }
+    end
   end
 end
