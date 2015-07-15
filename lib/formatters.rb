@@ -24,8 +24,12 @@ end
 # Writes one file per page
 class FilePrinter
   def initialize(crawl, out_dir)
-    @crawl_root = Pathname(URI(crawl.url).path)
+    root_path = URI(crawl.url).path.to_s
+    root_path = "/" if root_path.empty?
+
+    @crawl_root = Pathname(root_path)
     @out_dir = Pathname(out_dir)
+    @out_dir.mkpath
   end
 
   def append(doc, uri)

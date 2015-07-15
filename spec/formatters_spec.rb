@@ -57,3 +57,24 @@ RSpec.describe FilePrinter, '#append' do
     end
   end
 end
+
+RSpec.describe FilePrinter do
+  include TestConstruct::Helpers
+  
+  it "doesn't choke on roots with no path (eg. http://example.com)" do
+    tricky = "http://example.com"
+    crawl = Crawl.new tricky
+    folder = 'test_output/'
+
+    within_construct() do |construct|
+      construct.directory 'fileprinter_web2text' do |d|
+        FilePrinter.new(crawl, folder)
+          .append(doc1, "#{tricky}/")
+
+        doc1_path = File.join folder, 'index.txt'
+        expect(File::file?(doc1_path)).to be_truthy
+        expect(IO.read(doc1_path)).to eq(doc1)
+      end
+    end
+  end
+end
