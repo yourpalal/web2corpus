@@ -23,6 +23,10 @@ class Crawl
 
   def skip?(url)
     url_s = url.to_s
+    if !url_s.start_with? @url
+      return true
+    end
+
     @avoid.any? { |a|
       url_s.start_with? a
     }

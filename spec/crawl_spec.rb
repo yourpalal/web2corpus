@@ -10,6 +10,11 @@ RSpec.describe Crawl, '#filter' do
       expect(crawl.filter links).to eq links
       expect(links.select {|u| crawl.focus? u}).to eq links
     end
+
+    it "will not crawl above the root" do
+      crawl = Crawl.new "#{root}/wow/cool"
+      expect(crawl.skip? root).to be true
+    end
   end
 
   context "with patterns" do
