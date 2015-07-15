@@ -2,7 +2,7 @@ require 'uri'
 
 class Crawl
   attr_reader :url
-  
+
   def initialize(url, avoid = [])
     @url = url
 
@@ -17,8 +17,9 @@ class Crawl
   end
 
   def skip?(url)
-      @avoid.any? { |a|
-        url.start_with? a
-      }
+    url_s = url.to_s
+    @avoid.any? { |a|
+      url_s.start_with? a
+    }
   end
 end
