@@ -11,7 +11,7 @@ require './lib/formatters'
 
 options = {
   query: "body",
-  sleep: 1,
+  sleep: 0,
   avoid: [],
   formatter: LinePrinter,
   out: $stdout,
@@ -56,7 +56,7 @@ OptionParser.new do |opts|
 end.parse!
 
 if ARGV.length != 1 then
-  puts 'incorrect number of arguments!'
+  puts 'incorrect number of arguments! Try -h for help'
   exit
 end
 
