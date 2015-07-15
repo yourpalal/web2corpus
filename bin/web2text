@@ -15,6 +15,7 @@ options = {
   avoid: [],
   focus: [],
   formatter: LinePrinter,
+  ignore_robots_txt: false,
   out: $stdout,
 }
 
@@ -25,8 +26,8 @@ OptionParser.new do |opts|
       options[:query] = q
     end
 
-    opts.on("-s", "--sleep[=OPTIONAL]", Float, "Delay between requests. Default 0, -s sets to 1.") do |q|
-      options[:sleep] = n
+    opts.on("-s [OPTIONAL]", "--sleep [OPTIONAL]", Float, "Delay between requests. Default 1, -s sets to 1.") do |n|
+      options[:sleep] = n || 1
     end
 
     opts.on("--avoid x,y,z", Array, "List of paths to avoid when crawling. These paths and everything below them will be ignored.") do |avoid|
@@ -53,15 +54,18 @@ OptionParser.new do |opts|
       end
     end
 
+    opts.on("--bad-robot", "Ignore robots.txt") do
+      options[:ignore_robots_txt] = true
+    end
+
     opts.on_tail("-h", "--help", "Show this message") do
         puts opts
         exit
     end
-
-    opts.on("--")
 end.parse!
 
 if ARGV.length != 1 then
+  puts ARGV
   puts 'incorrect number of arguments! Try -h for help'
   exit
 end
@@ -70,12 +74,24 @@ crawl = Crawl.new ARGV[0], options[:avoid], options[:focus]
 crawler = Crawler.new crawl, options[:query]
 formatter = options[:formatter].new crawl, options[:out]
 
-Anemone.crawl(crawl.url, :obey_robots_txt => true) do |anemone|
-    anemone.focus_crawl { |page| crawl.filter page.links }
+Anemone.crawl(crawl.url, :obey_robots_txt => !options[:ignore_robots_txt]) do |anemone|
+    anemone.focus_crawl do |page|
+      crawl.filter page.links
+    end
+
     anemone.on_every_page do |page|
+        STDERR.puts page.url
+
         # ignore redirects
-        next if 300 <= page.code and page.code < 400
-        next if !crawl.focus? page.url
+        code = page.code || 200
+        if 300 <= code and code < 400
+          next
+        elsif !crawl.focus? page.url
+          next
+        elsif page.doc.nil?
+          STDERR.puts "ERR: Failed to retrieve #{page.url}"
+          next
+        end
 
         plain = crawler.doc_as_plaintext page.doc
         formatter.append plain, page.url
