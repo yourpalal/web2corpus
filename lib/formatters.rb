@@ -15,6 +15,10 @@ class LinePrinter
     @output.write doc.gsub(/\n+/, ' ')
     self
   end
+
+  def close
+    @output.close
+  end
 end
 
 # Writes one file per page
@@ -35,5 +39,8 @@ class FilePrinter
     path.parent.mkpath
     path.open("w") { |f| f.write(doc) }
     self
+  end
+
+  def close
   end
 end
