@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+
+require 'anemone'
+require 'nokogiri'
+
+require 'optparse'
+
+require './lib/crawl'
+require './lib/crawler'
+require './lib/formatters'
+
+options = {
+  query: "body",
+  sleep: 1,
+  avoid: [],
+  formatter: LinePrinter,
+  out: $stdout,
+}
+
+OptionParser.new do |opts|
+    opts.banner = "Usage: web2text [options] http://example.com/"
+
+    opts.on("-q", "--css", "--query=CSS_QUERY", String) do |q|
+      options[:query] = q
+    end
+
+    opts.on("-s", "--sleep[=OPTIONAL]", Float, "Delay between requests. Default 0, -s sets to 1.") do |q|
+      options[:sleep] = n
+    end
+
+    opts.on("--avoid x,y,z", Array, "List of paths to avoid when crawling. These paths and everything below them will be ignored.") do |avoid|
+      options[:avoid] = avoid
+    end
+
+    opts.on("--lines [web2.txt]", String, "One line per page. Can print to std out or a file.") do |f|
+      options[:formatter] = LinePrinter
+      options[:out] = if f then File.open(f, 'w') else $stdout end
+    end
+
+    opts.on("--files out/", String, "One file per page. Following website structure, in the specified directory.") do |o|
+      options[:formatter] = FilePrinter
+      options[:out] = Pathname(o)
+
+      if options[:out].exist? and !options[:out].directory? then
+        puts 'argument to --files must be a directory'
+        exit
+      end
+    end
+
+    opts.on_tail("-h", "--help", "Show this message") do
+        puts opts
+        exit
+    end
+
+    opts.on("--")
+end.parse!
+
+if ARGV.length != 1 then
+  puts 'incorrect number of arguments!'
+  exit
+end
+
+crawl = Crawl.new ARGV[0], options[:avoid]
+crawler = Crawler.new crawl, options[:query]
+formatter = options[:formatter].new crawl, options[:out]
+
+Anemone.crawl(crawl.url, :obey_robots_txt => true) do |anemone|
+    anemone.focus_crawl { |page| crawl.filter page.links }
+    anemone.on_every_page do |page|
+        # ignore redirects
+        next if 300 <= page.code and page.code < 400
+
+        puts page.url
+        plain = crawler.doc_as_plaintext page.doc
+        formatter.append plain, page.url
+        sleep options[:sleep]
+    end
+
+    anemone.after_crawl do
+      formatter.close
+    end
+end
