@@ -5,9 +5,9 @@ require 'nokogiri'
 
 require 'optparse'
 
-require './lib/crawl'
-require './lib/crawler'
-require './lib/formatters'
+require_relative '../lib/crawl'
+require_relative '../lib/crawler'
+require_relative '../lib/formatters'
 
 options = {
   query: "body",

@@ -1,4 +1,4 @@
-require 'crawl'
+require_relative '../lib/crawl'
 
 root = "http://example.com"
 

@@ -1,5 +1,4 @@
 require 'rspec'
-# require 'fakefs/spec_helpers'
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|

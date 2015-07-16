@@ -1,5 +1,6 @@
-require 'crawler'
 require 'nokogiri'
+
+require_relative '../lib/crawler'
 
 RSpec.describe Crawler, '#process_doc' do
   before(:all) do

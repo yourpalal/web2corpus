@@ -1,10 +1,9 @@
 require 'rspec'
 require 'stringio'
-
-require 'crawl'
-require 'formatters'
-
 require 'test_construct'
+
+require_relative '../lib/crawl'
+require_relative '../lib/formatters'
 
 doc1 = "This is a document\nwith a newline"
 doc2 = "This is another document"
@@ -60,7 +59,7 @@ end
 
 RSpec.describe FilePrinter do
   include TestConstruct::Helpers
-  
+
   it "doesn't choke on roots with no path (eg. http://example.com)" do
     tricky = "http://example.com"
     crawl = Crawl.new tricky
