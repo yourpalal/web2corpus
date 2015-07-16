@@ -1,4 +1,4 @@
-require_relative '../lib/crawl'
+require 'web2text'
 
 root = "http://example.com"
 

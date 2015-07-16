@@ -1,6 +1,6 @@
 require 'uri'
 
-class LinePrinter
+class Web2Text::LinePrinter
   def initialize(crawl, output)
     @output = output
     @first = true
@@ -22,7 +22,7 @@ class LinePrinter
 end
 
 # Writes one file per page
-class FilePrinter
+class Web2Text::FilePrinter
   def initialize(crawl, out_dir)
     root_path = URI(crawl.url).path.to_s
     root_path = "/" if root_path.empty?

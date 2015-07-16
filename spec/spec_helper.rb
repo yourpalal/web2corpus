@@ -1,5 +1,11 @@
 require 'rspec'
 
+require 'web2text'
+
+Crawler = Web2Text::Crawler
+Crawl = Web2Text::Crawl
+
+
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

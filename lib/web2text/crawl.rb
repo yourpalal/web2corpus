@@ -1,6 +1,6 @@
 require 'uri'
 
-class Crawl
+class Web2Text::Crawl
   attr_reader :url
 
   def initialize(url, avoid = [], focus = [])

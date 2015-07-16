@@ -1,5 +1,5 @@
 
-class Crawler
+class Web2Text::Crawler
   def initialize(crawl, query="body")
     @crawl = crawl
     @query = query

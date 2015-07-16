@@ -1,6 +1,6 @@
 require 'nokogiri'
 
-require_relative '../lib/crawler'
+require 'web2text'
 
 RSpec.describe Crawler, '#process_doc' do
   before(:all) do

@@ -2,8 +2,10 @@ require 'rspec'
 require 'stringio'
 require 'test_construct'
 
-require_relative '../lib/crawl'
-require_relative '../lib/formatters'
+require 'web2text'
+
+LinePrinter = Web2Text::LinePrinter
+FilePrinter = Web2Text::FilePrinter
 
 doc1 = "This is a document\nwith a newline"
 doc2 = "This is another document"
